@@ -5,6 +5,30 @@ const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser'); /* bodyparsed? */
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
+
+app.get('/stations', (req, res) => {
+    res.status(200).send('Hello World!');
+});
+app.get('/', (req, res) => {
+    res.status(200).send('Hello World!');
+});
+app.get('/', (req, res) => {
+    res.status(200).send('Hello World!');
+});
+
+app.use('*', (req, res) => {
+    res.status(405).send('Operation not supported.');
+});
+
+app.listen(port, () => {
+    console.log('Express app listening on port ' + port);
+});
+
+
+
+
+
+
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
