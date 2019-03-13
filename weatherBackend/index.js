@@ -1,7 +1,9 @@
 //Sample data for Project 3
 const express = require('express');
 const app = express(); /* Þarf þennan ? */
-
+const port = process.env.PORT || 3000;
+const bodyParser = require('body-parser'); /* bodyparsed? */
+app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
