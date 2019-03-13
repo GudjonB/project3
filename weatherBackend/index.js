@@ -21,6 +21,7 @@ var observations = [
 
 let nextStationId = 3;
 let nextObservationId = 3;
+let date = new Date().getTime();
 
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
