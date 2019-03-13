@@ -1,4 +1,7 @@
 //Sample data for Project 3
+const express = require('express');
+const app = express(); /* Þarf þennan ? */
+
 
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
