@@ -5,10 +5,18 @@ const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser'); /* bodyparsed? */
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
-
-app.get('/stations', (req, res) => {
-    res.status(200).send('Hello World!');
-});
+app.get('/stations', (req, res) => {
+    res.status(200).json(stations);
+});
+app.get('/stations/:id', (req, res) => {
+    for (let i=0;i<stations.length;i++) {
+        if (stations[i].id == req.params.id) {
+            res.status(200).json(stations[i]);
+            return;
+        }
+    }
+    res.status(404).json({'message': "User with id " + req.params.userId + " does not exist."});
+});
 app.get('/bla', (req, res) => {
     res.status(200).send('Hello bitch!');
 });
