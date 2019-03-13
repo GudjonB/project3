@@ -9,8 +9,8 @@ app.use(bodyParser.json()); /* Tell express to use the body parser module */
 app.get('/stations', (req, res) => {
     res.status(200).send('Hello World!');
 });
-app.get('/', (req, res) => {
-    res.status(200).send('Hello World!');
+app.get('/bla', (req, res) => {
+    res.status(200).send('Hello bitch!');
 });
 app.get('/', (req, res) => {
     res.status(200).send('Hello World!');
