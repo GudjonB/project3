@@ -12,7 +12,7 @@ var hours = date.getSeconds;
 var stations = [
     {id: 1, description: "Reykjavik", lat: 64.1275, lon: 21.9028, observations: [2]},
     {id: 2, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1,3,4]},
-    {id: 10, description: "EGS", lat: 65.6856, lon: 18.1002, observations: []}
+    {id: 10, description: "EGS", lat: 65.6856, lon: 18.1002, observations: [4]}
 ];
 
 //The following is an example of an array of two observations.
@@ -114,25 +114,18 @@ app.put('/stations/:id', (req, res) => {
 });
 /* þessi prentar út observation arrayið fyrir station idið */
 app.get('/stations/:id/observations', (req, res) => {
-    for (let i=0;i<observations.length;i++) {
+    for (let i=0;i<stations.length;i++) {
         if (stations[i].id == req.params.id) {
-            res.status(200).json(observations[i]);
-            return;
+            for(let j = 0; j < observations.length;j++) {
+                if(stations[i].observations == observations[j].id) {
+                    res.status(200).json(observations[j]);
+                    return;
+                }
+            }
         }
     }
     res.status(404).json({'message': "Observation with station id " + req.params.id + "does not exist."});
 });
-
-/* á eftir að fokka í þessum fyrir "Read an individual observation"*/
-app.get('stations/observations/:id', (req, res) => {
-    for (let i=0;i<stations.observations.length;i++) {
-        if (stations[i].observations == req.params.id) {
-            res.status(200).json(stations[i]);
-            return;
-        }
-    }
-    res.status(404).json({'message': "Observation with id " + req.params.id + " does not exist."});
-});
 
 
 app.use('*', (req, res) => {
