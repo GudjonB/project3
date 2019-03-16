@@ -149,14 +149,8 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
                 }
             }
         }
-<<<<<<< HEAD
     } 
     res.status(404).json({'message': "Observation with id " + req.params.oId + " for station with id "+ req.params.sId +" does not exist."});
-=======
-    }
-    res.status(404).json({'message': "Observation with id " + req.params.oId + " does not exist."});
-    return;
->>>>>>> 404153891edad15c0a629ebb7ca2fd91b85e2ca8
 });
 
 
