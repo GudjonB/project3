@@ -55,22 +55,8 @@ app.get('/api/v1/stations', (req, res) => {
 app.get('/api/v1/stations/:id', (req, res) => {
     let i = 0;
     while (i < stations.length) {
-        // let j = 0;
-        // let k = 0;
         if(stations[i].id == req.params.id) {
-            /* If all observations should appear within the station in the observations attribute the following code should be used
-            let tmpObs = stations[i].observations.slice();
-            while (j < stations[i].observations.length && k < observations.length) {
-                if (observations[k].id == stations[i].observations[j]) {
-                    stations[i].observations[j] = observations[k];
-                    j++;
-                    k++;
-                } else {
-                    k++;
-                }
-            }*/
             res.status(200).json(stations[i]);
-            //stations[i].observations = tmpObs; 
             return;
         }
         i++;
@@ -83,7 +69,7 @@ app.get('/api/v1/stations/:id', (req, res) => {
 // Create a new station
 app.post('/api/v1/stations', (req, res) => {
     if (!helpers.isValidStation(req.body)) {
-        res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"});
+        res.status(400).json({'message': "Valid description, latitude and longitude fields are required in the request body"});
     } else {
         let newStation = {id:nextStationId, description: req.body.description, lat: req.body.lat, lon: req.body.lon, observations: []};
         stations.push(newStation);
@@ -147,9 +133,10 @@ app.delete('/api/v1/stations/:id', (req, res) => {
     
 });
 
-app.put('/api/v1/stations/:id', (req, res) => {  /************* laga  ************/
+
+app.put('/api/v1/stations/:id', (req, res) => {
     if (!helpers.isValidStation(req.body)) { // validation in helpers
-        res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"}); 
+        res.status(400).json({'message': "Valid description, latitude and longitude fields are required in the request body"}); 
     } else {
         for (let i=0;i<stations.length;i++) {
             if (stations[i].id == req.params.id) {
@@ -206,7 +193,7 @@ app.get('/api/v1/stations/:sId/observations/:oId', (req, res) => {
 // Create a new observation
 app.post('/api/v1/stations/:id/observations', (req, res) => {
     if (!helpers.isValidObservation(req.body)) {  // Validation function in helpers used
-        res.status(400).json({ 'message': "temp, windSpeed, windDir, prec and hum fields are required in the request body" });
+        res.status(400).json({ 'message': "Valid temp, windSpeed, windDir, prec and hum fields are required in the request body" });
     } else {
         for (let i = 0; i < stations.length; i++) {
             if (stations[i].id == req.params.id) {
