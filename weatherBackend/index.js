@@ -11,8 +11,8 @@ var hours = date.getSeconds;
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
     {id: 1, description: "Reykjavik", lat: 64.1275, lon: 21.9028, observations: [1,2]},
-    {id: 4, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1]},
-    {id: 10, description: "EGS", lat: 65.6856, lon: 18.1002, observations: []}
+    {id: 2, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1]},
+    {id: 3, description: "Egilsstadir", lat: 65.6856, lon: 18.1002, observations: [4,5]}
 ];
 
 //The following is an example of an array of two observations.
@@ -22,6 +22,7 @@ var observations = [
     {id: 2, date: 1551885137409, temp: 0.6, windSpeed: 5.0, windDir: "n", prec: 0.0, hum: 50.0},
     {id: 3, date: 1551885137409, temp: 0.6, windSpeed: 5.0, windDir: "n", prec: 0.0, hum: 50.0},
     {id: 4, date: 1551842337409, temp: 0.6, windSpeed: 5.0, windDir: "n", prec: 0.0, hum: 50.0},
+    {id: 5, date: 1551842337409, temp: 29.6, windSpeed: 5.0, windDir: "s", prec: 0.0, hum: 50.0}
 
 ];
 
@@ -134,17 +135,21 @@ app.get('/stations/:id/observations', (req, res) => {
 
 /* á eftir að fokka í þessum fyrir "Read an individual observation"*/
 app.get('/stations/:sId/observations/:oId', (req, res) => {
-    for(let i = 0; i <stations.length; i++){
+    for(let i = 0; i < stations.length; i++){
         if(stations[i].id == req.params.sId){
-            for (let j=0;j<stations[i].observations.length;j++) {
+            for (let j = 0 ; j < stations[i].observations.length; j++) {
                 if (stations[i].observations[j] == req.params.oId) {
-                    res.status(200).json(observations[j]);
-                    return;
+                    for(let k = 0; k < observations.length; k++){
+                        if(observations[k].id == stations[i].observations[j]){
+                            res.status(200).json(observations[k]);
+                            return;
+                        }
+                    }
                 }
             }
         }
-    }
-    res.status(404).json({'message': "Observation with id " + req.params.oId + " does not exist."});
+    } 
+    res.status(404).json({'message': "Observation with id " + req.params.oId + " for station with id "+ req.params.sId +" does not exist."});
 });
 
 
