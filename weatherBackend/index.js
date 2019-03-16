@@ -36,7 +36,7 @@ let nextObservationId = 6;
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
 // Read all stations
-app.get('/stations', (req, res) => {
+app.get('/api/v1/stations', (req, res) => {
     if (stations.length > 0) {
         let stationPart = [];
         let i = 0;
@@ -52,7 +52,7 @@ app.get('/stations', (req, res) => {
 });
 
 // Read an individual station
-app.get('/stations/:id', (req, res) => {
+app.get('/api/v1/stations/:id', (req, res) => {
     let i = 0;
     while (i < stations.length) {
         // let j = 0;
@@ -81,7 +81,7 @@ app.get('/stations/:id', (req, res) => {
 });
 
 // Create a new station
-app.post('/stations', (req, res) => {
+app.post('/api/v1/stations', (req, res) => {
     if (!helpers.isValidStation(req.body)) {
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"});
     } else {
@@ -93,7 +93,7 @@ app.post('/stations', (req, res) => {
 });
 
 // Delete all stations
-app.delete('/stations', (req, res) => {
+app.delete('/api/v1/stations', (req, res) => {
     if (stations.length == 0) {
         res.status(400).json({'message': "There are no stations to delete"});
         return;
@@ -121,7 +121,7 @@ app.delete('/stations', (req, res) => {
 });
 
 // delete a single stations and all of its observations
-app.delete('/stations/:id', (req, res) => {
+app.delete('/api/v1/stations/:id', (req, res) => {
     let i = 0;
     while (i < stations.length) {
         let j = 0;
@@ -147,7 +147,7 @@ app.delete('/stations/:id', (req, res) => {
     
 });
 
-app.put('/stations/:id', (req, res) => {  /************* laga  ************/
+app.put('/api/v1/stations/:id', (req, res) => {  /************* laga  ************/
     if (!helpers.isValidStation(req.body)) { // validation in helpers
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"}); 
     } else {
@@ -165,7 +165,7 @@ app.put('/stations/:id', (req, res) => {  /************* laga  ************/
     }
 });
 /* þessi prentar út observation arrayið fyrir station idið */
-app.get('/stations/:id/observations', (req, res) => {
+app.get('/api/v1/stations/:id/observations', (req, res) => {
     for (let i = 0; i < stations.length; i++) {
         if (stations[i].id == req.params.id) {
             let obsToRet = [];
@@ -185,7 +185,7 @@ app.get('/stations/:id/observations', (req, res) => {
 });
 
 /* á eftir að fokka í þessum fyrir "Read an individual observation"*/
-app.get('/stations/:sId/observations/:oId', (req, res) => {
+app.get('/api/v1/stations/:sId/observations/:oId', (req, res) => {
     for(let i = 0; i < stations.length; i++){
         if(stations[i].id == req.params.sId){
             for (let j = 0 ; j < stations[i].observations.length; j++) {
@@ -204,7 +204,7 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
 });
 
 // Create a new observation
-app.post('/stations/:id/observations', (req, res) => {
+app.post('/api/v1/stations/:id/observations', (req, res) => {
     if (!helpers.isValidObservation(req.body)) {  // Validation function in helpers used
         res.status(400).json({ 'message': "temp, windSpeed, windDir, prec and hum fields are required in the request body" });
     } else {
@@ -230,7 +230,7 @@ app.post('/stations/:id/observations', (req, res) => {
 });
 
 
-app.delete('/stations/:sId/observations/:oId', (req, res) => {
+app.delete('/api/v1/stations/:sId/observations/:oId', (req, res) => {
     for (let i=0;i<observations.length;i++) {
         if (observations[i].id == req.params.oId) {
             var retArr = []; 
@@ -245,7 +245,7 @@ app.delete('/stations/:sId/observations/:oId', (req, res) => {
     res.status(404).json({'message': "Observation with id: " + req.params.oId + " does not exist"});
 });
 
-app.delete('/stations/:id/observations', (req, res) => {
+app.delete('/api/v1/stations/:id/observations', (req, res) => {
     var retArr = [];
     for (let i=0;i<observations.length;i++) {
         if (stations[i].id == req.params.id) { 
