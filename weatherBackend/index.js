@@ -5,10 +5,6 @@ const app = express(); /* Þarf þennan ? */
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser'); /* bodyparsed? */
 
-function unixTimeStamp() {
-    var date = new Date();
-    return date.getTime();
-}
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
@@ -222,7 +218,6 @@ app.delete('/api/v1/stations/:sId/observations/:oId', (req, res) => {
         if (observations[i].id == req.params.oId) {
             var retArr = []; 
             retArr.push(observations[i]);
-            //var returnArray = observations[i].id.slice();
             observations.slice(i,1);
             res.status(200).json(retArr);
             observations[i].id = [];
@@ -235,17 +230,24 @@ app.delete('/api/v1/stations/:sId/observations/:oId', (req, res) => {
 app.delete('/api/v1/stations/:id/observations', (req, res) => {
     var retArr = [];
     for (let i=0;i<observations.length;i++) {
-        if (stations[i].id == req.params.id) { 
-            retArr.push(stations[i].observations);
-            //var returnArray = observations[i].id.slice();
-            observations.slice(i,1);
+        if (stations[i].id == req.params.id) {
+            if(stations[i].observations === []){
+                res.status(404).json({'message': "Station with id " + req.params.id + " has no observations"});
+            }
+            for(let j = 0; j < stations[i].observations.length; j++){
+                for(let k = 0; k < observations.length; k++){
+                    if(observations[k].id == stations[i].observations[j]){
+                        retArr.push(observations.splice(k,1))
+                    }
+                } 
+            }
             res.status(200).json(retArr);
             stations[i].observations = [];
             return;
         }
         
     }
-    res.status(404).json({'message': "User with id " + req.params.id + " does not exist"});
+    res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
 });
 
 
