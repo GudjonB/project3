@@ -1,6 +1,6 @@
 
 
-function isValidNumber(param){
+module.exports.isValidNumber = function (param){
     if ((Number)(param) != NaN && param != undefined){
         return true;
     }
@@ -55,7 +55,7 @@ module.exports.isValidObservation = function(observation){
 }
 
 module.exports.isValidStation = function(station){
-    if(station != undefined && isValidLat(station.lat) && isValidLon(station.lon) && station.description != undefined){
+    if(station != undefined && isValidLat(station.lat) && isValidLon(station.lon) && station.description != undefined && typeof(station.windDir) != String){
         return true;
     }
     else {
