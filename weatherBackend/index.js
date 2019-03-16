@@ -11,7 +11,7 @@ var hours = date.getSeconds;
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
     {id: 1, description: "Reykjavik", lat: 64.1275, lon: 21.9028, observations: [2]},
-    {id: 4, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1]},
+    {id: 2, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1,3,4]},
     {id: 10, description: "EGS", lat: 65.6856, lon: 18.1002, observations: []}
 ];
 
@@ -20,16 +20,22 @@ var stations = [
 var observations = [
     {id: 1, date: 1551885104266, temp: -2.7, windSpeed: 2.0, windDir: "ese", prec: 0.0, hum: 82.0},
     {id: 2, date: 1551885137409, temp: 0.6, windSpeed: 5.0, windDir: "n", prec: 0.0, hum: 50.0},
+    {id: 3, date: 1551885137409, temp: 0.6, windSpeed: 5.0, windDir: "n", prec: 0.0, hum: 50.0},
+    {id: 4, date: 1551842337409, temp: 0.6, windSpeed: 5.0, windDir: "n", prec: 0.0, hum: 50.0},
+
 ];
 
-let nextStationId = 3;
+let nextStationId = 11;
 let nextObservationId = 3;
 
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
+// Read all stations
 app.get('/stations', (req, res) => {
     res.status(200).json(stations);
 });
+
+// Read an individual station
 app.get('/stations/:id', (req, res) => {
     for (let i=0;i<stations.length;i++) {
         if (stations[i].id == req.params.id) {
@@ -39,25 +45,49 @@ app.get('/stations/:id', (req, res) => {
     }
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
 });
+
+// Create a new station
 app.post('/stations', (req, res) => {
     if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined || req.body.lon === undefined) {
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"});
     } else {
-        let newStation = {description: req.body.description, lat: req.body.lat, lon: req.body.lon, id:nextStationId, observations: []};
+        let newStation = {id:nextStationId, description: req.body.description, lat: req.body.lat, lon: req.body.lon, observations: []};
         stations.push(newStation);
         nextStationId++;
         res.status(201).json(newStation);
     }
 });
+
+// delete all stations
 app.delete('/stations', (req, res) => {
     var returnArray = stations.slice();
     stations = [];
     res.status(200).json(returnArray);
 });
+
+// delete a single stations and all of its observations
 app.delete('/stations/:id', (req, res) => {
+    let obsToRet = [];
     for (let i=0;i<stations.length;i++) {
         if (stations[i].id == req.params.id) {
-            res.status(200).json(stations.splice(i, 1));
+            obsToRet.push(stations[i])
+            obsToDel = stations[i].observations;
+            if (obsToDel.length > 0) {
+                k = 0;
+                for (let j=0; j<observations.length; j++) {
+                    if (k >= obsToDel.length) {
+                        break;
+                    }
+                    if (observations[j].id == obsToDel[k]){
+                        obsToRet.push(observations[j]);
+                        observations.splice(j, 1);
+                        j--;
+                        k++;
+                    }
+                }
+            }
+            stations.splice(i, 1)
+            res.status(200).json(obsToRet);
             return;
         }
     }
