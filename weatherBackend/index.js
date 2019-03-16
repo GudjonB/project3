@@ -31,12 +31,12 @@ let nextObservationId = 3;
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
 // Read all stations
-app.get('/stations', (req, res) => {
+app.get('/stations', (req, res) => {
     res.status(200).json(stations);
-});
+});
 
 // Read an individual station
-app.get('/stations/:id', (req, res) => {
+app.get('/stations/:id', (req, res) => {
     for (let i=0;i<stations.length;i++) {
         if (stations[i].id == req.params.id) {
             res.status(200).json(stations[i]);
@@ -44,7 +44,7 @@ app.get('/stations/:id', (req, res) => {
         }
     }
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
-});
+});
 
 // Create a new station
 app.post('/stations', (req, res) => {
@@ -63,14 +63,15 @@ app.delete('/stations', (req, res) => {
     var returnArray = stations.slice();
     stations = [];
     res.status(200).json(returnArray);
-});
+});
 
 // delete a single stations and all of its observations
-app.delete('/stations/:id', (req, res) => {
+app.delete('/stations/:id', (req, res) => {
     let obsToRet = [];
+    let stationToRet = [];
     for (let i=0;i<stations.length;i++) {
         if (stations[i].id == req.params.id) {
-            obsToRet.push(stations[i])
+            stationToRet = stations[i];
             obsToDel = stations[i].observations;
             if (obsToDel.length > 0) {
                 k = 0;
@@ -81,20 +82,20 @@ app.delete('/stations/:id', (req, res) => {
                     if (observations[j].id == obsToDel[k]){
                         obsToRet.push(observations[j]);
                         observations.splice(j, 1);
-                        j--;
                         k++;
+                        j--;
                     }
                 }
             }
             stations.splice(i, 1)
-            res.status(200).json(obsToRet);
+            res.status(200).json({station: stationToRet, observations: obsToRet});
             return;
         }
     }
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
-});
+});
 
-app.put('/stations/:id', (req, res) => {
+app.put('/stations/:id', (req, res) => {
     if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined 
         || req.body.lon === undefined || req.body.observations === undefined) { // skoda betur observation id check
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"}); 
@@ -111,7 +112,7 @@ app.put('/stations/:id', (req, res) => {
             }
         res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
     }
-});
+});
 /* þessi prentar út observation arrayið fyrir station idið */
 app.get('/stations/:id/observations', (req, res) => {
     for (let i=0;i<observations.length;i++) {
@@ -132,7 +133,7 @@ app.get('/stations/:id/observations', (req, res) => {
 });
 
 /* á eftir að fokka í þessum fyrir "Read an individual observation"*/
-app.get('/stations/:sId/observations/:oId', (req, res) => {
+app.get('/stations/:sId/observations/:oId', (req, res) => {
     for(let i = 0; i <stations.length; i++){
         if(stations[i].id == req.params.sId){
             for (let j=0;j<stations[i].observations.length;j++) {
@@ -144,7 +145,7 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
         }
     }
     res.status(404).json({'message': "Observation with id " + req.params.oId + " does not exist."});
-});
+});
 
 
 app.use('*', (req, res) => {
