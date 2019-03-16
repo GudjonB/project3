@@ -123,7 +123,6 @@ app.get('/stations/:id/observations', (req, res) => {
                         obsToRet.push(observations[k]);
                     }
                 }
-                
             }
             res.status(200).json(obsToRet);
             return;
