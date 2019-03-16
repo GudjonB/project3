@@ -128,8 +128,9 @@ app.get('/stations/:id/observations', (req, res) => {
             res.status(200).json(obsToRet);
             return;
         }
+            res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
+            return;
     }
-    res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
 });
 
 /* á eftir að fokka í þessum fyrir "Read an individual observation"*/
@@ -145,6 +146,7 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
         }
     }
     res.status(404).json({'message': "Observation with id " + req.params.oId + " does not exist."});
+    return;
 });
 
 
