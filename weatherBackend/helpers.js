@@ -9,7 +9,7 @@ function isValidNumber(param){
     }
 }
 
-function isValidLat(lat){
+module.exports.isValidLat = function (lat){
     if(isValidNumber(lat) && lat > -90 && lat < 90){
         return true;
     }
@@ -17,7 +17,7 @@ function isValidLat(lat){
         return false;
     }
 }
-function isValidLon(lon){
+module.exports.isValidLon = function (lon){
     if(isValidNumber(lon) && lon > -180 && lon < 180){
         return true;
     }
@@ -44,12 +44,21 @@ function isValidHum(hum){
     }
 }
 
-module.exports.isValidObservation = function (observation){
-    if(isValidNumber(observation.temp) && isValidHum(observation.hum) && isValidNumber(observation.windSpeed)
+module.exports.isValidObservation = function(observation){
+    if( observation != undefined && isValidNumber(observation.temp) && isValidHum(observation.hum) && isValidNumber(observation.windSpeed)
        && isValidNumber(observation.windDir) && isValidPrec(observation.prec)){
            return true;
        }
        else {
            return false;
        }
+}
+
+module.exports.isValidStation = function(station){
+    if(station != undefined && isValidLat(station.lat) && isValidLon(station.lon) && station.description != undefined){
+        return true;
+    }
+    else {
+        return false;
+    }
 }

@@ -82,7 +82,7 @@ app.get('/stations/:id', (req, res) => {
 
 // Create a new station
 app.post('/stations', (req, res) => {
-    if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined || req.body.lon === undefined) {
+    if (!helpers.isValidStation(req.body)) {
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"});
     } else {
         let newStation = {id:nextStationId, description: req.body.description, lat: req.body.lat, lon: req.body.lon, observations: []};
@@ -148,8 +148,7 @@ app.delete('/stations/:id', (req, res) => {
 });
 
 app.put('/stations/:id', (req, res) => {  /************* laga  ************/
-    if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined 
-        || req.body.lon === undefined ) { // skoda betur observation id check
+    if (!helpers.isValidStation(req.body)) { // validation in helpers
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"}); 
     } else {
         for (let i=0;i<stations.length;i++) {
