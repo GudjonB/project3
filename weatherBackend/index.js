@@ -10,7 +10,7 @@ var hours = date.getSeconds;
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
-    {id: 1, description: "Reykjavik", lat: 64.1275, lon: 21.9028, observations: [2]},
+    {id: 1, description: "Reykjavik", lat: 64.1275, lon: 21.9028, observations: [1,2]},
     {id: 4, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1]},
     {id: 10, description: "EGS", lat: 65.6856, lon: 18.1002, observations: []}
 ];
@@ -86,19 +86,30 @@ app.put('/stations/:id', (req, res) => {
 app.get('/stations/:id/observations', (req, res) => {
     for (let i=0;i<observations.length;i++) {
         if (stations[i].id == req.params.id) {
-            res.status(200).json(observations[i]);
-            return;
+            let obsToRet = [];
+            for(let j = 0; j<stations[i].observations.length; j++){
+                for(let k = 0; k < observations.length; k++)
+                    if(observations[k].id === stations[i].observations[j]){
+                        obsToRet.push(observations[k]);
+                    }
+                res.status(200).json(obsToRet);
+                return;
+            }
         }
     }
-    res.status(404).json({'message': "Observation with station id " + req.params.id + "does not exist."});
+    res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
 });
 
 /* á eftir að fokka í þessum fyrir "Read an individual observation"*/
-app.get('stations/observations/:id', (req, res) => {
-    for (let i=0;i<stations.observations.length;i++) {
-        if (stations[i].observations == req.params.id) {
-            res.status(200).json(stations[i]);
-            return;
+app.get('/stations/:sId/observations/:oId', (req, res) => {
+    for(let i = 0; i <stations.length; i++){
+        if(stations[i].id === req.params.sId){
+            for (let j=0;j<stations[i].observations.length;j++) {
+                if (stations[i].observations[j].id == req.params.oId) {
+                    res.status(200).json(stations[i].observations[j]);
+                    return;
+                }
+            }
         }
     }
     res.status(404).json({'message': "Observation with id " + req.params.id + " does not exist."});
