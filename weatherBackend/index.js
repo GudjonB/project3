@@ -55,15 +55,32 @@ app.get('/stations', (req, res) => {
 app.get('/stations/:id', (req, res) => {
     let i = 0;
     while (i < stations.length) {
+<<<<<<< HEAD
         let j = 0;
         let k = 0;
         if(stations[i].id == req.params.id) {
+=======
+        // let j = 0;
+        // let k = 0;
+        if(stations[i].id == req.params.id) {
+            /* If all observations should appear within the station in the observations attribute the following code should be used
+            let tmpObs = stations[i].observations.slice();
+            while (j < stations[i].observations.length && k < observations.length) {
+                if (observations[k].id == stations[i].observations[j]) {
+                    stations[i].observations[j] = observations[k];
+                    j++;
+                    k++;
+                } else {
+                    k++;
+                }
+            }*/
+>>>>>>> 9ff6608148767911078e3179a5c1a39ca2c5c917
             res.status(200).json(stations[i]);
             return;
         }
         i++;
     }
-    res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
+    res.status(404).json({'message': "Station with id: " + req.params.id + " does not exist."});
     return;
     
 });
@@ -130,7 +147,7 @@ app.delete('/stations/:id', (req, res) => {
         }
         i++;
     }
-    res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
+    res.status(404).json({'message': "Station with id: " + req.params.id + " does not exist."});
     return;
     
 });
@@ -149,7 +166,7 @@ app.put('/stations/:id', (req, res) => {
                 return;
                 }
             }
-        res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
+        res.status(404).json({'message': "Station with id: " + req.params.id + " does not exist"});
     }
 });
 /* þessi prentar út observation arrayið fyrir station idið */
@@ -168,7 +185,7 @@ app.get('/stations/:id/observations', (req, res) => {
             return; 
         }
     }
-    res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
+    res.status(404).json({'message': "Observations for station with id: " + req.params.id + " do not exist."});
     return;
 });
 
@@ -188,7 +205,7 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
             }
         }
     } 
-    res.status(404).json({'message': "Observation with id " + req.params.oId + " for station with id "+ req.params.sId +" does not exist."});
+    res.status(404).json({'message': "Observation with id: " + req.params.oId + " for station with id: "+ req.params.sId +" does not exist."});
 });
 
 // Create a new observation
@@ -213,7 +230,7 @@ app.post('/stations/:id/observations', (req, res) => {
                 return;
             }
         }
-        res.status(404).json({ 'message': "Station with id " + req.params.id + " does not exist" });
+        res.status(404).json({ 'message': "Station with id: " + req.params.id + " does not exist" });
     }
 });
 
@@ -230,8 +247,25 @@ app.delete('/stations/:sId/observations/:oId', (req, res) => {
             return;
         }
     }
-    res.status(404).json({'message': "User with id " + req.params.oId + " does not exist"});
+    res.status(404).json({'message': "Observation with id: " + req.params.oId + " does not exist"});
 });
+
+app.delete('/stations/:id/observations', (req, res) => {
+    var retArr = [];
+    for (let i=0;i<observations.length;i++) {
+        if (stations[i].id == req.params.id) { 
+            retArr.push(stations[i].observations);
+            //var returnArray = observations[i].id.slice();
+            observations.slice(i,1);
+            res.status(200).json(retArr);
+            stations[i].observations = [];
+            return;
+        }
+        
+    }
+    res.status(404).json({'message': "User with id " + req.params.id + " does not exist"});
+});
+
 
 
 app.use('*', (req, res) => {
