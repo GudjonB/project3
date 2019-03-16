@@ -43,10 +43,26 @@ function isValidHum(hum){
         return false;
     }
 }
+function isValidDescription(description){
+    if(description != undefined && typeof(description) == String){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function isValidwindDir(windDir){
+    if(windDir != undefined && typeof(windDir) == String){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 module.exports.isValidObservation = function(observation){
     if( observation != undefined && isValidNumber(observation.temp) && isValidHum(observation.hum) && isValidNumber(observation.windSpeed)
-       && isValidNumber(observation.windDir) && isValidPrec(observation.prec)){
+       && isValidWindDir(observation.windDir) && isValidPrec(observation.prec)){
            return true;
        }
        else {
@@ -55,7 +71,7 @@ module.exports.isValidObservation = function(observation){
 }
 
 module.exports.isValidStation = function(station){
-    if(station != undefined && isValidLat(station.lat) && isValidLon(station.lon) && station.description != undefined && typeof(station.windDir) != String){
+    if(station != undefined && isValidLat(station.lat) && isValidLon(station.lon) && isValidDescription(station.description)){
         return true;
     }
     else {
