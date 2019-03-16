@@ -12,6 +12,7 @@ function unixTimeStamp() {
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
+
     {id: 1, description: "Reykjavik", lat: 64.1275, lon: 21.9028, observations: [1,2]},
     {id: 2, description: "Akureyri", lat: 65.6856, lon: 18.1002, observations: [1]},
     {id: 3, description: "Egilsstadir", lat: 65.6856, lon: 18.1002, observations: [4,5]}
@@ -28,6 +29,7 @@ var observations = [
 
 ];
 
+
 let nextStationId = 4;
 let nextObservationId = 6;
 
@@ -35,18 +37,47 @@ app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
 // Read all stations
 app.get('/stations', (req, res) => {
-    res.status(200).json(stations);
+    if (stations.length > 0) {
+        let stationPart = [];
+        let i = 0;
+        while (i < stations.length) {
+            part = {id:stations[i].id, description: stations[i].description};
+            stationPart.push(part);
+            i++
+        }
+        res.status(200).json({Stations:stationPart});
+        return;
+    }
+    res.status(404).json({'message': "No stations exist."});
 });
 
 // Read an individual station
 app.get('/stations/:id', (req, res) => {
-    for (let i=0;i<stations.length;i++) {
-        if (stations[i].id == req.params.id) {
+    let i = 0;
+    while (i < stations.length) {
+        let j = 0;
+        let k = 0;
+        if(stations[i].id = req.params.id) {
+            /* If all observations should appear within the station in the observations attribute the following code should be used
+            let tmpObs = stations[i].observations.slice();
+            while (j < stations[i].observations.length && k < observations.length) {
+                if (observations[k].id == stations[i].observations[j]) {
+                    stations[i].observations[j] = observations[k];
+                    j++;
+                    k++;
+                } else {
+                    k++;
+                }
+            }*/
             res.status(200).json(stations[i]);
+            //stations[i].observations = tmpObs; 
             return;
         }
+        i++;
     }
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
+    return;
+    
 });
 
 // Create a new station
@@ -61,41 +92,59 @@ app.post('/stations', (req, res) => {
     }
 });
 
-// delete all stations
+// Delete all stations
 app.delete('/stations', (req, res) => {
-    var returnArray = stations.slice();
+    if (stations.length == 0) {
+        res.status(400).json({'message': "There are no stations to delete"});
+        return;
+    }
+
+    let i = 0;
+    while (i < stations.length) {
+        let j = 0;
+        let k = 0;
+        while (j < stations[i].observations.length && k < observations.length) {
+            if (observations[k].id == stations[i].observations[j]) {
+                stations[i].observations[j] = observations[k];
+                j++;
+                k++;
+            } else {
+                k++;
+            }
+        }
+        i++;
+    }
+    res.status(200).json(stations);
     stations = [];
-    res.status(200).json(returnArray);
+    observations = [];
+    return;
 });
 
 // delete a single stations and all of its observations
 app.delete('/stations/:id', (req, res) => {
-    let obsToRet = [];
-    let stationToRet = [];
-    for (let i=0;i<stations.length;i++) {
-        if (stations[i].id == req.params.id) {
-            stationToRet = stations[i];
-            obsToDel = stations[i].observations;
-            if (obsToDel.length > 0) {
-                k = 0;
-                for (let j=0; j<observations.length; j++) {
-                    if (k >= obsToDel.length) {
-                        break;
-                    }
-                    if (observations[j].id == obsToDel[k]){
-                        obsToRet.push(observations[j]);
-                        observations.splice(j, 1);
-                        k++;
-                        j--;
-                    }
+    let i = 0;
+    while (i < stations.length) {
+        let j = 0;
+        let k = 0;
+        if(stations[i].id == req.params.id) {
+            while (j < stations[i].observations.length && k < observations.length) {
+                if (observations[k].id == stations[i].observations[j]) {
+                    stations[i].observations[j] = observations[k];
+                    observations.splice(k, 1);
+                    j++;
+                } else {
+                    k++;
                 }
             }
-            stations.splice(i, 1)
-            res.status(200).json({station: stationToRet, observations: obsToRet});
+            res.status(200).json(stations[i]);
+            stations.splice(i, 1);
             return;
         }
+        i++;
     }
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
+    return;
+    
 });
 
 app.put('/stations/:id', (req, res) => {  /************* laga  ************/
@@ -179,6 +228,7 @@ app.post('/stations/:id/observations', (req, res) => {
         res.status(404).json({ 'message': "Station with id " + req.params.id + " does not exist" });
     }
 });
+
 
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported.');
