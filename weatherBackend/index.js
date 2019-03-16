@@ -127,7 +127,7 @@ app.get('/stations/:id/observations', (req, res) => {
                 }
             }
             res.status(200).json(obsToRet);
-            return;
+            return; 
         }
     }
     res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
