@@ -9,7 +9,7 @@ module.exports.isValidNumber = function (param){
     }
 }
 
-module.exports.isValidLat = function (lat){
+function isValidLat (lat){
     if(isValidNumber(lat) && lat > -90 && lat < 90){
         return true;
     }
@@ -17,7 +17,7 @@ module.exports.isValidLat = function (lat){
         return false;
     }
 }
-module.exports.isValidLon = function (lon){
+function isValidLon (lon){
     if(isValidNumber(lon) && lon > -180 && lon < 180){
         return true;
     }
