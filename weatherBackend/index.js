@@ -82,14 +82,22 @@ app.put('/stations/:id', (req, res) => {
         res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
     }
 });
-
-app.get('/observations', (req, res) => {
-    res.status(200).json(observations);
-});
-app.get('/observations/:id', (req, res) => {
+/* þessi prentar út observation arrayið fyrir station idið */
+app.get('/stations/:id/observations', (req, res) => {
     for (let i=0;i<observations.length;i++) {
         if (observations[i].id == req.params.id) {
             res.status(200).json(observations[i]);
+            return;
+        }
+    }
+    res.status(404).json({'message': "Observation with station id " + req.params.id + "does not exist."});
+});
+
+/* á eftir að fokka í þessum fyrir "Read an individual observation"*/
+app.get('stations/observations/:id', (req, res) => {
+    for (let i=0;i<stations.observations.length;i++) {
+        if (stations[i].observations == req.params.id) {
+            res.status(200).json(stations[i]);
             return;
         }
     }
