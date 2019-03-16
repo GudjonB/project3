@@ -218,6 +218,22 @@ app.post('/stations/:id/observations', (req, res) => {
 });
 
 
+app.delete('/stations/:sId/observations/:oId', (req, res) => {
+    for (let i=0;i<observations.length;i++) {
+        if (observations[i].id == req.params.oId) {
+            var retArr = []; 
+            retArr.push(observations[i]);
+            //var returnArray = observations[i].id.slice();
+            observations.slice(i,1);
+            res.status(200).json(retArr);
+            observations[i].id = [];
+            return;
+        }
+    }
+    res.status(404).json({'message': "User with id " + req.params.oId + " does not exist"});
+});
+
+
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported.');
 });
