@@ -4,9 +4,10 @@ const app = express(); /* Þarf þennan ? */
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser'); /* bodyparsed? */
 
-var date = new Date();
-var hours = date.getSeconds;
-
+function unixTimeStamp() {
+    var date = new Date();
+    return date.getTime();
+}
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
@@ -26,7 +27,7 @@ var observations = [
 
 ];
 
-let nextStationId = 11;
+let nextStationId = 4;
 let nextObservationId = 6;
 
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
@@ -163,7 +164,7 @@ app.post('/stations/:id/observations', (req, res) => {
             if (stations[i].id == req.params.id) {
                 let newObservation = { 
                     id:        nextObservationId,
-                    date:      date.getSeconds,
+                    date:      new Date().getTime(),
                     temp:      req.body.temp,
                     windSpeed: req.body.windSpeed,
                     windDir:   req.body.windDir,
@@ -173,6 +174,7 @@ app.post('/stations/:id/observations', (req, res) => {
                 stations[i].observations.push(newObservation.id);
                 nextObservationId++;
                 res.status(201).json(newObservation);
+                return;
             }
         }
         res.status(404).json({ 'message': "Station with id " + req.params.id + " does not exist" });
