@@ -4,6 +4,9 @@ const app = express(); /* Þarf þennan ? */
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser'); /* bodyparsed? */
 
+var date = new Date();
+var hours = date.getSeconds;
+
 //The following is an example of an array of two stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
@@ -21,7 +24,6 @@ var observations = [
 
 let nextStationId = 3;
 let nextObservationId = 3;
-let date = new Date().getTime();
 
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
@@ -35,7 +37,7 @@ app.get('/stations/:id', (req, res) => {
             return;
         }
     }
-    res.status(404).json({'message': "User with id " + req.params.id + " does not exist."});
+    res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
 });
 app.post('/stations', (req, res) => {
     if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined || req.body.lon === undefined) {
@@ -79,6 +81,19 @@ app.put('/stations/:id', (req, res) => {
             }
         res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
     }
+});
+
+app.get('/observations', (req, res) => {
+    res.status(200).json(observations);
+});
+app.get('/observations/:id', (req, res) => {
+    for (let i=0;i<observations.length;i++) {
+        if (observations[i].id == req.params.id) {
+            res.status(200).json(observations[i]);
+            return;
+        }
+    }
+    res.status(404).json({'message': "Observation with id " + req.params.id + " does not exist."});
 });
 
 
