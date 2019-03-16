@@ -1,5 +1,6 @@
 //Sample data for Project 3
 const express = require('express');
+var helpers = require('./helpers.js')
 const app = express(); /* Þarf þennan ? */
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser'); /* bodyparsed? */
@@ -97,7 +98,7 @@ app.delete('/stations/:id', (req, res) => {
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist."});
 });
 
-app.put('/stations/:id', (req, res) => {
+app.put('/stations/:id', (req, res) => {  /************* laga  ************/
     if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined 
         || req.body.lon === undefined ) { // skoda betur observation id check
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"}); 
@@ -153,11 +154,10 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
     } 
     res.status(404).json({'message': "Observation with id " + req.params.oId + " for station with id "+ req.params.sId +" does not exist."});
 });
+
 // Create a new observation
 app.post('/stations/:id/observations', (req, res) => {
-    if (req.body.temp === undefined || req.body.windSpeed === undefined || req.body.windDir === undefined
-        || req.body.prec === undefined || req.body.hum === undefined) {
-            console.log(req.body);
+    if (!helpers.isValidObservation(req.body)) {  // Validation function in helpers used
         res.status(400).json({ 'message': "temp, windSpeed, windDir, prec and hum fields are required in the request body" });
     } else {
         for (let i = 0; i < stations.length; i++) {
@@ -180,8 +180,6 @@ app.post('/stations/:id/observations', (req, res) => {
         res.status(404).json({ 'message': "Station with id " + req.params.id + " does not exist" });
     }
 });
-//id: 1, date: 1551885104266, temp: -2.7, windSpeed: 2.0, windDir: "ese", prec: 0.0, hum: 82.0
-
 
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported.');
