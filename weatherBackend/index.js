@@ -245,6 +245,23 @@ app.delete('/stations/:sId/observations/:oId', (req, res) => {
     res.status(404).json({'message': "Observation with id: " + req.params.oId + " does not exist"});
 });
 
+app.delete('/stations/:id/observations', (req, res) => {
+    var retArr = [];
+    for (let i=0;i<observations.length;i++) {
+        if (stations[i].id == req.params.id) { 
+            retArr.push(stations[i].observations);
+            //var returnArray = observations[i].id.slice();
+            observations.slice(i,1);
+            res.status(200).json(retArr);
+            stations[i].observations = [];
+            return;
+        }
+        
+    }
+    res.status(404).json({'message': "User with id " + req.params.id + " does not exist"});
+});
+
+
 
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported.');
