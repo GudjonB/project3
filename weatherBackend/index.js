@@ -53,7 +53,6 @@ app.get('/stations', (req, res) => {
 
 // Read an individual station
 app.get('/stations/:id', (req, res) => {
-    console.log(req.params.id+ "   " + (Number)(req.params.id))
     let i = 0;
     while (i < stations.length) {
         // let j = 0;
