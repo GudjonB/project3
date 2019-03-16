@@ -27,7 +27,7 @@ var observations = [
 ];
 
 let nextStationId = 11;
-let nextObservationId = 3;
+let nextObservationId = 6;
 
 app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
@@ -98,7 +98,7 @@ app.delete('/stations/:id', (req, res) => {
 
 app.put('/stations/:id', (req, res) => {
     if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined 
-        || req.body.lon === undefined || req.body.observations === undefined) { // skoda betur observation id check
+        || req.body.lon === undefined ) { // skoda betur observation id check
         res.status(400).json({'message': "description, latitude and longitude fields are required in the request body"}); 
     } else {
         for (let i=0;i<stations.length;i++) {
@@ -152,6 +152,33 @@ app.get('/stations/:sId/observations/:oId', (req, res) => {
     } 
     res.status(404).json({'message': "Observation with id " + req.params.oId + " for station with id "+ req.params.sId +" does not exist."});
 });
+// Create a new observation
+app.post('/stations/:id/observations', (req, res) => {
+    if (req.body.temp === undefined || req.body.windSpeed === undefined || req.body.windDir === undefined
+        || req.body.prec === undefined || req.body.hum === undefined) {
+            console.log(req.body);
+        res.status(400).json({ 'message': "temp, windSpeed, windDir, prec and hum fields are required in the request body" });
+    } else {
+        for (let i = 0; i < stations.length; i++) {
+            if (stations[i].id == req.params.id) {
+                let newObservation = { 
+                    id:        nextObservationId,
+                    date:      date.getSeconds,
+                    temp:      req.body.temp,
+                    windSpeed: req.body.windSpeed,
+                    windDir:   req.body.windDir,
+                    prec:      req.body.prec,
+                    hum:       req.body.hum};
+                observations.push(newObservation);
+                stations[i].observations.push(newObservation.id);
+                nextObservationId++;
+                res.status(201).json(newObservation);
+            }
+        }
+        res.status(404).json({ 'message': "Station with id " + req.params.id + " does not exist" });
+    }
+});
+//id: 1, date: 1551885104266, temp: -2.7, windSpeed: 2.0, windDir: "ese", prec: 0.0, hum: 82.0
 
 
 app.use('*', (req, res) => {
