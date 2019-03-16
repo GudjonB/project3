@@ -116,10 +116,10 @@ app.put('/stations/:id', (req, res) => {
 });
 /* þessi prentar út observation arrayið fyrir station idið */
 app.get('/stations/:id/observations', (req, res) => {
-    for (let i=0;i<observations.length;i++) {
+    for (let i = 0; i < stations.length; i++) {
         if (stations[i].id == req.params.id) {
             let obsToRet = [];
-            for(let j = 0; j<stations[i].observations.length; j++){
+            for(let j = 0; j < stations[i].observations.length; j++){
                 for(let k = 0; k < observations.length; k++){
                     if(observations[k].id == stations[i].observations[j]){
                         obsToRet.push(observations[k]);
@@ -129,9 +129,9 @@ app.get('/stations/:id/observations', (req, res) => {
             res.status(200).json(obsToRet);
             return;
         }
-            res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
-            return;
     }
+    res.status(404).json({'message': "Observation with station id " + req.params.id + " does not exist."});
+    return;
 });
 
 /* á eftir að fokka í þessum fyrir "Read an individual observation"*/
