@@ -231,6 +231,17 @@ app.post('/stations/:id/observations', (req, res) => {
 });
 //id: 1, date: 1551885104266, temp: -2.7, windSpeed: 2.0, windDir: "ese", prec: 0.0, hum: 82.0
 
+app.delete('/stations/:sId/observations/:oId', (req, res) => {
+    for (let i=0;i<observations.length;i++) {
+        if (observations[i].id == req.params.oId) {
+            //var returnArray = observations[i].id.slice();
+            observations[i].id = [];
+            res.status(200).json(observations.slice(i,1));
+            return;
+        }
+    }
+    res.status(404).json({'message': "User with id " + req.params.oId + " does not exist"});
+});
 
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported.');
