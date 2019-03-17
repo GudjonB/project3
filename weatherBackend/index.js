@@ -229,40 +229,40 @@ app.post('/api/v1/stations/:id/observations', (req, res) => {
 
 /* Deletes an existing observation for a specified station. The request, if successful, returns all attributes of the deleted observation. */
 app.delete('/api/v1/stations/:sId/observations/:oId', (req, res) => {
-    for (let i=0;i<observations.length;i++) {
-        if (observations[i].id == req.params.oId) {
-            var retArr = []; 
-            retArr.push(observations[i]);
-            observations.slice(i,1);
-            res.status(200).json(retArr);
-            observations[i].id = [];
-            return;
+    for (let i=0;i<observations.length;i++) {           /* loop through the whole observations list */
+        if (observations[i].id == req.params.oId) {     /* if we find a match we go here, else we return 404 below */
+            var retArr = [];                            /* initialize an array for return */
+            retArr.push(observations[i]);               /* push into that array to see what is being deleted, later return */
+            observations.slice(i,1);                    /* slice the information to remove */
+            res.status(200).json(retArr);               /* return with status 200 the array of which was deleted */
+            observations[i].id = [];                    /* clear the valid array*/
+            return;                                     
         }
     }
-    res.status(404).json({'message': "Observation with id: " + req.params.oId + " does not exist"});
+    res.status(404).json({'message': "Observation with id: " + req.params.oId + " does not exist"}); /* if observation with id is not found we return status 404 and a message */
 });
 /* Deletes all existing observations for a specified station. The request, if successful, returns all deleted observations, and all their attributes. */
 app.delete('/api/v1/stations/:id/observations', (req, res) => {
     var retArr = [];
-    for (let i=0;i<observations.length;i++) {
-        if (stations[i].id == req.params.id) {
-            if(stations[i].observations === []){
-                res.status(404).json({'message': "Station with id " + req.params.id + " has no observations"});
+    for (let i=0;i<observations.length;i++) {       /* loop through the whole observations list */
+        if (stations[i].id == req.params.id) {      /* if we find a station id equal to the parameters inserted we go here */
+            if(stations[i].observations === []){    /* if no observation is listed in the found station we go here */
+                res.status(404).json({'message': "Station with id " + req.params.id + " has no observations"}); /* and return 404 with this message */
             }
-            for(let j = 0; j < stations[i].observations.length; j++){
-                for(let k = 0; k < observations.length; k++){
-                    if(observations[k].id == stations[i].observations[j]){
-                        retArr.push(observations.splice(k,1))
+            for(let j = 0; j < stations[i].observations.length; j++){   /* loop through the stations of observations list */
+                for(let k = 0; k < observations.length; k++){           
+                    if(observations[k].id == stations[i].observations[j]){   /* if observation with a specific id is equal to an observation listed in valid station we go here */
+                        retArr.push(observations.splice(k,1))                /* and push the spliced observations in order to return their values */
                     }
                 } 
             }
-            res.status(200).json(retArr);
-            stations[i].observations = [];
+            res.status(200).json(retArr);   /* return status 200 with the returned array values */
+            stations[i].observations = [];  /* clear the valid array */
             return;
         }
         
     }
-    res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
+    res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"}); /* if station with id is not found we return status 404 and a message */
 });
 /* By default: Not supported */
 app.use('*', (req, res) => {
