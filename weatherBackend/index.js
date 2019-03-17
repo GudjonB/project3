@@ -82,7 +82,7 @@ app.post('/api/v1/stations', (req, res) => {
 // Delete all stations
 app.delete('/api/v1/stations', (req, res) => {
     if (stations.length == 0) {
-        res.status(400).json({'message': "There are no stations to delete"});
+        res.status(404).json({'message': "There are no stations to delete"});
         return;
     }
 
@@ -134,15 +134,15 @@ app.delete('/api/v1/stations/:id', (req, res) => {
     
 });
 
-
+/* updating a station */
 app.put('/api/v1/stations/:id', (req, res) => {
     if (!helpers.isValidStation(req.body)) { // validation in helpers
         res.status(400).json({'message': "Valid description, latitude and longitude fields are required in the request body"}); 
     } else {
-        for (let i=0;i<stations.length;i++) {
-            if (stations[i].id == req.params.id) {
-                stations[i].description = req.body.description;
-                stations[i].lat = (Number)(req.body.lat);
+        for (let i=0;i<stations.length;i++) {                   // finding the right station from the given id
+            if (stations[i].id == req.params.id) {              //  
+                stations[i].description = req.body.description; // all parameters have been validated above
+                stations[i].lat = (Number)(req.body.lat);       // number input converted to numbers for consistency
                 stations[i].lon = (Number)(req.body.lon);
                 stations[i].description = req.body.description;
                 res.status(201).json(req.body);
@@ -154,13 +154,13 @@ app.put('/api/v1/stations/:id', (req, res) => {
 });
 /* þessi prentar út observation arrayið fyrir station idið */
 app.get('/api/v1/stations/:id/observations', (req, res) => {
-    for (let i = 0; i < stations.length; i++) {
+    for (let i = 0; i < stations.length; i++) {                             //finding the station
         if (stations[i].id == req.params.id) {
-            let obsToRet = [];
-            for(let j = 0; j < stations[i].observations.length; j++){
-                for(let k = 0; k < observations.length; k++){
-                    if(observations[k].id == stations[i].observations[j]){
-                        obsToRet.push(observations[k]);
+            let obsToRet = [];                                              // new array of observations to return created
+            for(let j = 0; j < stations[i].observations.length; j++){       // looping through the stations observation array
+                for(let k = 0; k < observations.length; k++){               // for every listed observation in the station
+                    if(observations[k].id == stations[i].observations[j]){  // find the observation in the observation array
+                        obsToRet.push(observations[k]);                     // and push it to the return array
                     }
                 }
             }
@@ -172,13 +172,13 @@ app.get('/api/v1/stations/:id/observations', (req, res) => {
     return;
 });
 
-/* á eftir að fokka í þessum fyrir "Read an individual observation"*/
+/* Read an individual observation*/
 app.get('/api/v1/stations/:sId/observations/:oId', (req, res) => {
-    for(let i = 0; i < stations.length; i++){
-        if(stations[i].id == req.params.sId){
-            for (let j = 0 ; j < stations[i].observations.length; j++) {
-                if (stations[i].observations[j] == req.params.oId) {
-                    for(let k = 0; k < observations.length; k++){
+    for(let i = 0; i < stations.length; i++){                                   //finding the station
+        if(stations[i].id == req.params.sId){                                   //
+            for (let j = 0 ; j < stations[i].observations.length; j++) {        // looping through the stations observation array
+                if (stations[i].observations[j] == req.params.oId) {            // if the statiion array includes the observation asked for
+                    for(let k = 0; k < observations.length; k++){               // find the observation in the observation array
                         if(observations[k].id == stations[i].observations[j]){
                             res.status(200).json(observations[k]);
                             return;
@@ -194,26 +194,26 @@ app.get('/api/v1/stations/:sId/observations/:oId', (req, res) => {
 // Create a new observation
 app.post('/api/v1/stations/:id/observations', (req, res) => {
     if (!helpers.isValidObservation(req.body)) {  // Validation function in helpers used
-        res.status(400).json({ 'message': "Valid temp, windSpeed, windDir, prec and hum fields are required in the request body" });
+        res.status(400).json({ 'message': "Valid temp, windSpeed, windDir, prec and hum fields are required in the request body" }); // if the body wasn't valid 
     } else {
-        for (let i = 0; i < stations.length; i++) {
+        for (let i = 0; i < stations.length; i++) { // first loop through the stations and find the right one
             if (stations[i].id == req.params.id) {
-                let newObservation = { 
-                    id:        nextObservationId,
-                    date:      new Date().getTime(),
-                    temp:      (Number)(req.body.temp),
+                let newObservation = {              // create a new observation
+                    id:        nextObservationId,   // auto generate id
+                    date:      new Date().getTime(),// auto generated time 
+                    temp:      (Number)(req.body.temp),     // number inputs converted to number for consistency
                     windSpeed: (Number)(req.body.windSpeed),
-                    windDir:   req.body.windDir,
+                    windDir:   req.body.windDir,            // string input already checked in the above validation
                     prec:      (Number)(req.body.prec),
                     hum:       (Number)(req.body.hum)};
-                observations.push(newObservation);
-                stations[i].observations.push(newObservation.id);
-                nextObservationId++;
+                observations.push(newObservation);      // add the new observation to the array
+                stations[i].observations.push(newObservation.id); // id of the new observation added to the array of the station
+                nextObservationId++;                    // observation id incramented
                 res.status(201).json(newObservation);
                 return;
             }
         }
-        res.status(404).json({ 'message': "Station with id: " + req.params.id + " does not exist" });
+        res.status(404).json({ 'message': "Station with id: " + req.params.id + " does not exist" }); // if we got here then no station was found
     }
 });
 

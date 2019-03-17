@@ -1,7 +1,7 @@
 
 
-function isValidNumber(param) {
-    if (!isNaN((Number)(param)) && param != undefined) {
+function isValidNumber(param) { // this function checks if the parametaer converted to a number is stilla valid number
+    if (!isNaN((Number)(param)) && param != undefined) { // if it is defined
         return true;
     }
     else {
@@ -47,7 +47,7 @@ function isValidHum(hum){
         return false;
     }
 }
-function isValidDescription(description){
+function isValidDescription(description){   // validations for strings was not required, but we still check to see if thay are strings
     if(description != undefined && typeof(description) === 'string'){
         return true;
     }
@@ -64,7 +64,7 @@ function isValidWindDir(windDir){
     }
 }
 
-module.exports.isValidObservation = function(observation){
+module.exports.isValidObservation = function(observation){ // wrapper for validating a whole observation exported
     if( observation != undefined && isValidNumber(observation.temp) && isValidHum(observation.hum) && isValidNumber(observation.windSpeed)
        && isValidWindDir(observation.windDir) && isValidPrec(observation.prec) && isValidNumber(observation.windSpeed)){
            return true;
@@ -74,7 +74,7 @@ module.exports.isValidObservation = function(observation){
        }
 }
 
-module.exports.isValidStation = function(station){
+module.exports.isValidStation = function(station){ // wrapper for validating a whole station exported
     if(station != undefined && isValidLat(station.lat) && isValidLon(station.lon) && isValidDescription(station.description)){
         return true;
     }
