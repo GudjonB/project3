@@ -67,7 +67,12 @@ app.post('/api/v1/stations', (req, res) => {
     if (!helpers.isValidStation(req.body)) {
         res.status(400).json({'message': "Valid description, latitude and longitude fields are required in the request body"});
     } else {
-        let newStation = {id:nextStationId, description: req.body.description, lat: req.body.lat, lon: req.body.lon, observations: []};
+        let newStation = {
+            id:nextStationId,
+             description: req.body.description,
+                     lat: (Number)(req.body.lat),
+                     lon: (Number)(req.body.lon), 
+            observations: []};
         stations.push(newStation);
         nextStationId++;
         res.status(201).json(newStation);
@@ -137,8 +142,8 @@ app.put('/api/v1/stations/:id', (req, res) => {
         for (let i=0;i<stations.length;i++) {
             if (stations[i].id == req.params.id) {
                 stations[i].description = req.body.description;
-                stations[i].lat = req.body.lat;
-                stations[i].lon = req.body.lon;
+                stations[i].lat = (Number)(req.body.lat);
+                stations[i].lon = (Number)(req.body.lon);
                 stations[i].description = req.body.description;
                 res.status(201).json(req.body);
                 return;
@@ -196,11 +201,11 @@ app.post('/api/v1/stations/:id/observations', (req, res) => {
                 let newObservation = { 
                     id:        nextObservationId,
                     date:      new Date().getTime(),
-                    temp:      req.body.temp,
-                    windSpeed: req.body.windSpeed,
+                    temp:      (Number)(req.body.temp),
+                    windSpeed: (Number)(req.body.windSpeed),
                     windDir:   req.body.windDir,
-                    prec:      req.body.prec,
-                    hum:       req.body.hum};
+                    prec:      (Number)(req.body.prec),
+                    hum:       (Number)(req.body.hum)};
                 observations.push(newObservation);
                 stations[i].observations.push(newObservation.id);
                 nextObservationId++;
