@@ -1,7 +1,7 @@
 
 
-module.exports.isValidNumber = function (param){
-    if ((Number)(param) != NaN && param != undefined){
+function isValidNumber(param) {
+    if (!isNaN((Number)(param)) && param != undefined) {
         return true;
     }
     else {
@@ -9,8 +9,12 @@ module.exports.isValidNumber = function (param){
     }
 }
 
+module.exports.isValidNumber = function (param){
+    return isValidNumber(param);
+}
+
 function isValidLat (lat){
-    if(isValidNumber(lat) && lat > -90 && lat < 90){
+    if(isValidNumber(lat) && lat >= -90 && lat <= 90){
         return true;
     }
     else {
@@ -18,7 +22,7 @@ function isValidLat (lat){
     }
 }
 function isValidLon (lon){
-    if(isValidNumber(lon) && lon > -180 && lon < 180){
+    if(isValidNumber(lon) && lon >= -180 && lon <= 180){
         return true;
     }
     else {
@@ -44,15 +48,15 @@ function isValidHum(hum){
     }
 }
 function isValidDescription(description){
-    if(description != undefined && typeof(description) == String){
+    if(description != undefined && typeof(description) === 'string'){
         return true;
     }
     else {
         return false;
     }
 }
-function isValidwindDir(windDir){
-    if(windDir != undefined && typeof(windDir) == String){
+function isValidWindDir(windDir){
+    if(windDir != undefined && typeof(windDir) === 'string'){
         return true;
     }
     else {
@@ -62,7 +66,7 @@ function isValidwindDir(windDir){
 
 module.exports.isValidObservation = function(observation){
     if( observation != undefined && isValidNumber(observation.temp) && isValidHum(observation.hum) && isValidNumber(observation.windSpeed)
-       && isValidWindDir(observation.windDir) && isValidPrec(observation.prec)){
+       && isValidWindDir(observation.windDir) && isValidPrec(observation.prec) && isValidNumber(observation.windSpeed)){
            return true;
        }
        else {
