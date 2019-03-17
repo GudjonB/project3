@@ -217,7 +217,7 @@ app.post('/api/v1/stations/:id/observations', (req, res) => {
     }
 });
 
-
+/* Deletes an existing observation for a specified station. The request, if successful, returns all attributes of the deleted observation. */
 app.delete('/api/v1/stations/:sId/observations/:oId', (req, res) => {
     for (let i=0;i<observations.length;i++) {
         if (observations[i].id == req.params.oId) {
@@ -231,7 +231,7 @@ app.delete('/api/v1/stations/:sId/observations/:oId', (req, res) => {
     }
     res.status(404).json({'message': "Observation with id: " + req.params.oId + " does not exist"});
 });
-
+/* Deletes all existing observations for a specified station. The request, if successful, returns all deleted observations, and all their attributes. */
 app.delete('/api/v1/stations/:id/observations', (req, res) => {
     var retArr = [];
     for (let i=0;i<observations.length;i++) {
@@ -254,13 +254,11 @@ app.delete('/api/v1/stations/:id/observations', (req, res) => {
     }
     res.status(404).json({'message': "Station with id " + req.params.id + " does not exist"});
 });
-
-
-
+/* By default: Not supported */
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported.');
 });
-
+/* Express used to listen to port 3000 (defined at top) */
 app.listen(port, () => {
     console.log('Express app listening on port ' + port);
 });
