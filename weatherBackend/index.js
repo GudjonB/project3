@@ -1,11 +1,11 @@
-//Sample data for Project 3
+//Initialization of the server and needed helper functions
 const express = require('express');
 var helpers = require('./helpers.js')
-const app = express(); /* Þarf þennan ? */
+const app = express();
 const port = process.env.PORT || 3000;
-const bodyParser = require('body-parser'); /* bodyparsed? */
+const bodyParser = require('body-parser');
 
-//The following is an example of an array of two stations. 
+//The following is an example of an array of stations. 
 //The observation array includes the ids of the observations belonging to the specified station
 var stations = [
 
@@ -14,7 +14,7 @@ var stations = [
     {id: 3, description: "Egilsstadir", lat: 65.6856, lon: 18.1002, observations: [4,5]}
 ];
 
-//The following is an example of an array of two observations.
+//The following is an example of an array of observations.
 //Note that an observation does not know which station it belongs to!
 var observations = [
     {id: 1, date: 1551885104266, temp: -2.7, windSpeed: 2.0, windDir: "ese", prec: 0.0, hum: 82.0},
@@ -33,30 +33,31 @@ app.use(bodyParser.json()); /* Tell express to use the body parser module */
 
 // Read all stations
 app.get('/api/v1/stations', (req, res) => {
-    if (stations.length > 0) {
-        let stationPart = [];
-        let i = 0;
-        while (i < stations.length) {
-            part = {id:stations[i].id, description: stations[i].description};
-            stationPart.push(part);
-            i++
-        }
-        res.status(200).json({Stations:stationPart});
-        return;
+    let retArr = [];
+    let i = 0;
+    // Iterate through the array and push the id and description to a new return array
+    while (i < stations.length) {
+        part = {id:stations[i].id, description: stations[i].description};
+        retArr.push(part);
+        i++
     }
-    res.status(404).json({'message': "No stations exist."});
+    res.status(200).json({Stations:retArr});
+    return;
 });
 
 // Read an individual station
 app.get('/api/v1/stations/:id', (req, res) => {
     let i = 0;
+    // Iterate through all the stations
     while (i < stations.length) {
+        // If the stations ID matches the requested ID return that station
         if(stations[i].id == req.params.id) {
             res.status(200).json(stations[i]);
             return;
         }
         i++;
     }
+    // If the station is not found return error message
     res.status(404).json({'message': "Station with id: " + req.params.id + " does not exist."});
     return;
     
@@ -64,8 +65,10 @@ app.get('/api/v1/stations/:id', (req, res) => {
 
 // Create a new station
 app.post('/api/v1/stations', (req, res) => {
+    // The input is validated and if not okay error message is sent and status code 400
     if (!helpers.isValidStation(req.body)) {
         res.status(400).json({'message': "Valid description, latitude and longitude fields are required in the request body"});
+        // If everything is valid, a new station is made and status code 201 is sent
     } else {
         let newStation = {
             id:nextStationId,
@@ -81,15 +84,17 @@ app.post('/api/v1/stations', (req, res) => {
 
 // Delete all stations
 app.delete('/api/v1/stations', (req, res) => {
+    // If there are no stations to delete, an error message is sent
     if (stations.length == 0) {
         res.status(400).json({'message': "There are no stations to delete"});
         return;
     }
-
+    // Iterate through all stations
     let i = 0;
     while (i < stations.length) {
         let j = 0;
         let k = 0;
+        //For each station find the corresponding observations and store them
         while (j < stations[i].observations.length && k < observations.length) {
             if (observations[k].id == stations[i].observations[j]) {
                 stations[i].observations[j] = observations[k];
@@ -101,6 +106,7 @@ app.delete('/api/v1/stations', (req, res) => {
         }
         i++;
     }
+    // Return all the deleted items
     res.status(200).json(stations);
     stations = [];
     observations = [];
@@ -110,10 +116,12 @@ app.delete('/api/v1/stations', (req, res) => {
 // delete a single stations and all of its observations
 app.delete('/api/v1/stations/:id', (req, res) => {
     let i = 0;
+    // Iterate through all the stations and find the correct one
     while (i < stations.length) {
         let j = 0;
         let k = 0;
         if(stations[i].id == req.params.id) {
+            // For that staion iterate through all of its observations and delete them
             while (j < stations[i].observations.length && k < observations.length) {
                 if (observations[k].id == stations[i].observations[j]) {
                     stations[i].observations[j] = observations[k];
@@ -123,12 +131,14 @@ app.delete('/api/v1/stations/:id', (req, res) => {
                     k++;
                 }
             }
+            //Return the deleted stations
             res.status(200).json(stations[i]);
             stations.splice(i, 1);
             return;
         }
         i++;
     }
+    // If no stations is with the requested ID an error message is sent with status code 404
     res.status(404).json({'message': "Station with id: " + req.params.id + " does not exist."});
     return;
     
